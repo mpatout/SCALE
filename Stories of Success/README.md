@@ -66,13 +66,20 @@ Column and sheet names are matched flexibly — minor naming differences between
 
 ## Adjusting Thresholds
 
-Pass keyword arguments to `StoriesOfSuccessProcessor` to override any default threshold:
+Pass keyword arguments to `StoriesOfSuccessProcessor` to override any default threshold.
+Because the filename contains spaces, use `importlib` to load the module:
 
 ```python
+import importlib.util
 from pathlib import Path
-from StoriesOfSuccess import StoriesOfSuccessProcessor
 
-processor = StoriesOfSuccessProcessor(
+spec = importlib.util.spec_from_file_location(
+    "StoriesOfSuccess", "Stories of Success.py"
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+
+processor = module.StoriesOfSuccessProcessor(
     database_file_path=Path("path/to/SCALE_Export.xlsx"),
     output_dir=Path("path/to/output/folder"),   # default: script folder
     min_years_in_scale=2.5,                      # default: 2.0

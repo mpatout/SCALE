@@ -36,13 +36,15 @@ Configuration (edit before running)
                               studentScaleSemester import field.
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
-from datetime import datetime
 import re
 import warnings
+from datetime import datetime
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
 from openpyxl.styles import PatternFill, Font, Border, Side
+
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
 # ---------------------------------------------------------------------------
@@ -74,7 +76,7 @@ class StudentMigrationProcessor:
         self.recent_suppressed_df = pd.DataFrame()
         
     def load_master_list(self):
-        """Load the master student list (Updated Student List_new_8_23_24)."""
+        """Load the master student list workbook (reads the 'New Student List' tab)."""
         print(f"Loading master list from: {self.master_list_path}")
         try:
             # Read from "New Student List" tab
