@@ -1,6 +1,6 @@
 # SCALE Automation Scripts
 
-A collection of Python automation scripts built for the **SCALE** (Scalable Computing for Advancing Leadership and Education) program — a defense-industry-focused STEM training program that connects universities and students with U.S. defense employers.
+A collection of Python automation scripts built for the **SCALE** (Scalable Asymmetric Lifecycle Engagement) program — a defense-industry-focused STEM training program that connects universities and students with U.S. defense employers.
 
 These scripts reduce manual, repetitive data-management work by automating the most time-intensive parts of SCALE operations: onboarding new students, processing company report emails, and identifying top candidates for recognition.
 
