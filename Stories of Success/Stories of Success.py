@@ -39,9 +39,9 @@ Column and sheet names are resolved flexibly (case- and whitespace-insensitive) 
 minor naming variations between exports are handled automatically.
 """
 
+import re
 from datetime import datetime
 from pathlib import Path
-import re
 
 import numpy as np
 import pandas as pd
@@ -169,6 +169,14 @@ class StoriesOfSuccessProcessor:
 		return None
 
 	def _parse_term_year(self, text_value, mode):
+		"""
+		Parse a SCALE academic-term string (e.g. "Fall 2024", "FA 24", "24 Spring")
+		into a Timestamp.
+
+		mode="scale_start" maps to the beginning of the term;
+		mode="graduation" maps to the end of the term.
+		Returns pd.NaT on failure.
+		"""
 		if pd.isna(text_value):
 			return pd.NaT
 
@@ -178,12 +186,13 @@ class StoriesOfSuccessProcessor:
 
 		normalized = text.replace("\u2019", "'").replace("-", " ")
 
-		# Match patterns like "Fall 2024", "FA 24", or "24 Spring".
+		# Match "Fall 2024" / "FA 24" style
 		direct_match = re.search(
 			r"\b(spring|summer|fall|sp|su|fa)\b\s*[\'\s]*(\d{2,4})\b",
 			normalized,
 			re.IGNORECASE,
 		)
+		# Match "24 Spring" / "2024 Fall" style
 		reverse_match = re.search(
 			r"\b(\d{2,4})\b\s*[\'\s]*(spring|summer|fall|sp|su|fa)\b",
 			normalized,
@@ -342,12 +351,10 @@ class StoriesOfSuccessProcessor:
 		first_name_col = self._resolve_column_name(
 			self.students_df,
 			["firstName", "first name", "firstname"],
-			required=False,
 		)
 		last_name_col = self._resolve_column_name(
 			self.students_df,
 			["lastName", "last name", "lastname", "surname"],
-			required=False,
 		)
 		scale_semester_col = self._resolve_column_name(
 			self.students_df,
@@ -562,9 +569,7 @@ class StoriesOfSuccessProcessor:
 			"meetsAllCriteria",
 		]
 
-		scored_df = scored_df[output_columns].copy()
-
-		return scored_df
+		return scored_df[output_columns].copy()
 
 	def save_output(self, scored_df):
 		"""
@@ -651,7 +656,7 @@ class StoriesOfSuccessProcessor:
 					if ws is not None:
 						ws.freeze_panes = "A2"
 		except PermissionError:
-			print("[ERROR] Could not write output file because it is open or locked.")
+			print("[ERROR] Could not write output file — it may be open in Excel.")
 			return None
 
 		print(f"[OK] Output saved to: {output_path}")
